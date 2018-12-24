@@ -2,14 +2,14 @@ var emailSec = "crr:'+7 <-H\"#o*#ccr`";
 var phoneSec = "&xzxzfml>4";
 var emailKey = "-= northychen.com =-";
 var phoneKey = "-nnnnorthy- ";
-// var EMAIL = emailKey.split('').map(function(c, i){return String.fromCharCode((emailKey.charCodeAt(i) ^ (emailSec.charCodeAt(i) - 32)))}).join('');
-// var PHONE = phoneKey.split('').map(function(c, i){return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))}).join('');
-// var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
+var EMAIL = emailKey.split('').map(function(c, i){return String.fromCharCode((emailKey.charCodeAt(i) ^ (emailSec.charCodeAt(i) - 32)))}).join('');
+var PHONE = phoneKey.split('').map(function(c, i){return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))}).join('');
+var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
 
 /* for test only */
-var EMAIL = "n@g";
-var PHONE = "16";
-var TAILS = "x|";
+// var EMAIL = "n@g";
+// var PHONE = "16";
+// var TAILS = "x|";
 
 // Snake game
 $(function() {
