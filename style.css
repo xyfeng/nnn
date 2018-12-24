@@ -47,8 +47,8 @@ h2 {
 #snakeBox .snakeInstructions {
   display: none;
   position: relative;
-  top: 123px;
-  left: 155px;
+	top:calc(50% - 80px);
+	margin: auto;
   padding-top: 60px;
   width: 320px;
   height: 100px;

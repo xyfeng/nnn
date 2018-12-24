@@ -6,134 +6,9 @@ var EMAIL = emailKey.split('').map(function(c, i){return String.fromCharCode((em
 var PHONE = phoneKey.split('').map(function(c, i){return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))}).join('');
 var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
 
-// var TAILS = "<an-email-is-more-like-a-letter><Re:an-email-is-more-like-a-letter><Re:Re:an-email-is-more-like-a-letter>";
-
 // var EMAIL = "n@g";
 // var PHONE = "16";
 // var TAILS = "x|";
-
-// $(function(){
-// 	var PIC_WIDTH = 900;
-//
-// 	// Find the elements
-// 	var win = $(".window");
-// 	var slides = win.find(".slides");
-// 	var images = slides.find("img");
-//
-//   var bar = $('<div class="bar"></div>');
-//   for(var i = 0; i < images.length; i++) {
-//     var c = $('<a href="javascript:void(0);" class="slide-link"></a>');
-//     c.click((function(x){return function(){gotoPic(x);}})(i));
-//     bar.append(c);
-//   }
-//   $('.slide-buttons').append(bar);
-//
-// 	// calculate and set the width of the slides div
-// 	var width = images.length * PIC_WIDTH;
-// 	slides.css({width: width + "px"});
-//
-// 	var currentPic = 0;
-//
-//   updatePic();
-//
-// 	function updatePic() {
-// 		win.scrollLeft(currentPic * PIC_WIDTH);
-//     var links = bar.find('.slide-link');
-//     for(var i = 0; i < images.length; i++) {
-//       var link = $(links[i]);
-//       if(i < currentPic) {
-//         link.text('<');
-//       }else if(i == currentPic) {
-//         link.text(pad(currentPic + 1, 2) + '/' + pad(images.length, 2));
-//       }else if(i > currentPic) {
-//         link.text('>');
-//       }
-//     }
-// 	}
-//
-//   function pad(num, size) {
-//       var s = "000000000" + num;
-//       return s.substr(s.length-size);
-//   }
-//
-//   function gotoPic(i) {
-//     currentPic = i;
-//     updatePic();
-//   }
-//
-// 	// Bind the click events of the prev and next button
-// 	$(".prev").click(function(){
-// 		currentPic = currentPic - 1;
-// 		if(currentPic < 0) currentPic = images.length - 1;
-// 		updatePic();
-// 	});
-//
-// 	$(".next").click(function(){
-// 		currentPic = currentPic + 1;
-// 		if(currentPic >= images.length) currentPic = 0;
-// 		updatePic();
-// 	});
-//
-// });
-
-// Mobile contact links
-// $(function(){
-//   var wechat = $("#mobilewechatlink");
-//   var gmail = $("#mobilegmaillink");
-//   var instagram = $("#mobileinstagramlink");
-//
-//   wechat.click(function() {
-//     wechat.text('nnnnorthy');
-//     wechat.addClass('displaying');
-//   });
-//
-//   gmail.click(function() {
-//     gmail.text(EMAIL);
-//     gmail.addClass('displaying');
-//   });
-//
-//   instagram.click(function() {
-//     instagram.text('nnnnorthy');
-//     instagram.addClass('displaying');
-//   });
-// });
-
-// Floating qr code
-// $(function() {
-//   var qr = $('<div id="wechatQR"><img src="wechatQR.gif" width="160" height="160"></img></div>');
-//   var close = qr.find('span');
-//   var x = 100, y = 100;
-//   var dx = 1.0, dy = 3 / 5;
-//   var handler;
-//   $('body').append(qr);
-//
-//
-//   $("#wechatlink").click(function() {
-//     update();
-//     qr.show();
-//     if(handler) clearInterval(handler);
-//     handler = setInterval(update, 10);
-//   });
-//
-//   qr.click(function(){
-//     clearInterval(handler);
-//     qr.hide();
-//   });
-//
-//   function update() {
-//     w = $(window).width() - 200;
-//     h = $(window).height() - 230;
-//     if(x + dx > w || x + dx < 0) dx = -dx;
-//     if(y + dy > h || y + dy < 0) dy = -dy;
-//     x += dx;
-//     y += dy;
-//     qr.css({
-//       left: x + 'px',
-//       top: y + 'px'
-//     });
-//   }
-//
-// });
 
 // Snake game
 $(function() {
@@ -185,7 +60,7 @@ $(function() {
       var y = snake.body[0].y;
       var dir = snake.dir;
 
-      var endx = 8, endy = Math.max(gridHeight()/2, 18), endRow = gridWidth()-1;
+      var endx = 8, endy = Math.floor(gridHeight()/4*3 + 2), endRow = gridWidth()-1;
       if(x == endx && y == endy && snake.endingTurn == true) {
         state = STATES.FINISHED;
       }else if(x >= endRow) {
