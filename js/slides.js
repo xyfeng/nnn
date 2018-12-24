@@ -6,6 +6,7 @@ var EMAIL = emailKey.split('').map(function(c, i){return String.fromCharCode((em
 var PHONE = phoneKey.split('').map(function(c, i){return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))}).join('');
 var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
 
+/* for test only */
 // var EMAIL = "n@g";
 // var PHONE = "16";
 // var TAILS = "x|";
@@ -334,24 +335,24 @@ $(function() {
     setInstructions(instruction);
     instructions.show();
 
-    html2canvas(document.body).then(function(canvas) {
-        // Export the canvas to its data URI representation
-        var base64image = canvas.toDataURL("image/png");
-
-        // Open the image in a new window
-        window.open(base64image , "_blank");
-    });
-
-    // speed = START_SPEED * 3;
-    // scheduleAnimation(2000);
+    speed = START_SPEED * 3;
+    scheduleAnimation(2000);
   }
 
   function won() {
     state = STATES.WON;
-    setInstructions(":)<br/>NOW DROP A HELLO.");
-    instructions.show();
-    speed = START_SPEED * 3;
-    scheduleAnimation(500);
+
+    //save image
+    html2canvas(document.body).then(function(canvas) {
+      var a = document.createElement('a');
+      a.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+      a.download = 'northychen.png';
+      a.click();
+    });
+    // setInstructions(":)<br/>NOW DROP A HELLO.");
+    // instructions.show();
+    // speed = START_SPEED * 3;
+    // scheduleAnimation(500);
   }
 
   function scheduleAnimation(t) {
