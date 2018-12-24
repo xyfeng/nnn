@@ -333,12 +333,17 @@ $(function() {
     }
     setInstructions(instruction);
     instructions.show();
-    speed = START_SPEED * 3;
-    //for(var t = 0; t < 2000; t+= 400) {
-      //setTimeout(function(){$('.snakeBody').css({fontSize:'1.2em'})}, t);
-      //setTimeout(function(){$('.snakeBody').css({fontSize:'1.0em'})}, t + 200);
-    //}
-    scheduleAnimation(2000);
+
+    html2canvas(document.body).then(function(canvas) {
+        // Export the canvas to its data URI representation
+        var base64image = canvas.toDataURL("image/png");
+
+        // Open the image in a new window
+        window.open(base64image , "_blank");
+    });
+
+    // speed = START_SPEED * 3;
+    // scheduleAnimation(2000);
   }
 
   function won() {
