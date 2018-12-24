@@ -2,14 +2,14 @@ var emailSec = "crr:'+7 <-H\"#o*#ccr`";
 var phoneSec = "&xzxzfml>4";
 var emailKey = "-= northychen.com =-";
 var phoneKey = "-nnnnorthy- ";
-var EMAIL = emailKey.split('').map(function(c, i){return String.fromCharCode((emailKey.charCodeAt(i) ^ (emailSec.charCodeAt(i) - 32)))}).join('');
-var PHONE = phoneKey.split('').map(function(c, i){return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))}).join('');
-var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
+// var EMAIL = emailKey.split('').map(function(c, i){return String.fromCharCode((emailKey.charCodeAt(i) ^ (emailSec.charCodeAt(i) - 32)))}).join('');
+// var PHONE = phoneKey.split('').map(function(c, i){return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))}).join('');
+// var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
 
 /* for test only */
-// var EMAIL = "n@g";
-// var PHONE = "16";
-// var TAILS = "x|";
+var EMAIL = "n@g";
+var PHONE = "16";
+var TAILS = "x|";
 
 // Snake game
 $(function() {
@@ -328,15 +328,24 @@ $(function() {
 
   function lost() {
     state = STATES.LOST;
-    var instruction = ":)<br/>CLICK TO DOWNLOAD AND DROP A HELLO.";
+    // var instruction = ":)<br/>CLICK TO DOWNLOAD AND DROP A HELLO.";
     if(snake.body.length < EMAIL.length){
-      instruction = ":/<br/>PLEASE TRY AGAIN.";
-    }
-    setInstructions(instruction);
-    instructions.show();
+      var instruction = ":/<br/>PLEASE TRY AGAIN.";
+      setInstructions(instruction);
+      instructions.show();
 
-    speed = START_SPEED * 3;
-    scheduleAnimation(2000);
+      speed = START_SPEED * 3;
+      scheduleAnimation(2000);
+    }
+    else {
+      //save image
+      html2canvas(document.body).then(function(canvas) {
+        var a = document.createElement('a');
+        a.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        a.download = 'northychen.png';
+        a.click();
+      });
+    }
   }
 
   function won() {
