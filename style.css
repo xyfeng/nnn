@@ -1,0 +1,418 @@
+body{
+	background-color: #ebebeb;
+	font-family: Monaco, "Lucida Console", monospace;
+	font-size: 12pt;
+	letter-spacing: 0pt;
+	color: #000;
+	padding: 0px;
+	border: 0px;
+}
+
+a:link{text-decoration:none;color:#000;}
+a:visited{text-decoration: none;color:#000;}
+a:hover{text-decoration:underline;} 
+
+h2 {
+  font-weight: normal;
+}
+
+.nav{
+	min-height: 10px;
+	position: fixed;
+  font-weight: bold;
+	width: 1000px;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	z-index: 100;
+}
+
+.mobile {
+  clear: both;
+  display: none;
+}
+
+.desktop {
+  display: block;
+}
+
+#gmaillink, #wechatlink {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none; 
+}
+
+.info{
+	position: absolute;
+	text-align: right
+	-ms-transform: rotate(90deg); /* IE 9 */
+  -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+  transform: rotate(90deg);
+	left: 0px;
+	top: 80px;
+	width: 200px;
+	height: 100px;
+}
+
+.order{
+	position: absolute;
+	text-align: right;
+	-ms-transform: rotate(270deg);
+  -webkit-transform: rotate(270deg);
+  transform: rotate(270deg);
+  right: 0px;
+  top: 80px;
+	width: 200px;
+	height: 100px;
+}
+
+.matrix{
+	width: 640px;
+	margin-top: 30px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.matrix img {
+    -webkit-user-drag: none;
+     -khtml-user-drag: none;
+       -moz-user-drag: none;
+        -ms-user-drag: none;
+            user-drag: none; 
+}
+
+.thum{
+	width: 160px;
+	height: 140px;
+	float: left;
+}
+
+.slideshow{
+	width: 900px;
+	height: 550px;
+	margin-top: 30px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.slideshow .window {
+	position: relative;
+	width: 900px;
+	height: 550px;
+	overflow: hidden;
+	z-index: 0;
+  transition: 0.5s;
+}
+
+.slideshow .window .slides {
+	height: 550px;
+}
+
+.slideshow .window .slides img {
+	display: block;
+	float: left;
+}
+
+.slide-buttons {
+	position: absolute;
+	top: 0;
+	width: 900px;
+	height: 580px;
+}
+
+.slideshow .prev {
+	display: block;
+	position: absolute;
+	width: 100px;
+	bottom: 20px;
+	left: 80px;
+	padding-top: 500px;
+}
+
+.slideshow .next {
+	display: block;
+	position: absolute;
+	width: 100px;
+	bottom: 20px;
+	right: 80px;
+	padding-top: 500px;
+	text-align: right;
+}
+
+.slideshow .bar {
+	padding-top: 541px;
+	text-align: center;
+}
+
+.slideshow .bar a.slide-link {
+  margin: 0 5px;
+}
+
+.projecttitle{
+	margin-left: auto;
+	margin-right: auto;
+	width: 640px;
+	margin-top: 30px;
+	font-size: 1em;
+  padding-top: 10px;
+}
+
+.projectinfo{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+	width: 640px;
+	font-size: 1em;
+	line-height: 140%;
+	border: 20px;
+}
+
+.projectinfo a {
+  text-decoration:underline;
+}
+
+.backtohome {
+  margin-top: 30px;
+}
+
+.backtohome a:link {
+  text-decoration:none;
+}
+
+.backtohome a:hover {
+  text-decoration:underline;
+}
+
+.process{
+	width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.diagram1{
+	width: 50%;
+  float: left;
+}
+
+.processinfo{
+	margin-top: 20px;
+	margin-right: 0px;
+	width: 640px;
+	font-size: 0.8em;
+	line-height: 140%;
+	margin-bottom: 20px;
+}
+
+.diagram2{
+	width: 50%;
+  float: right;
+}
+
+.video{
+	margin-left: 0px;
+	margin-top: 40px;
+}
+
+ul{
+	list-style-type: none;
+	padding: 0;
+	font-size: 1em;
+	text-decoration: bold;
+}
+
+footer{
+	margin-top: 40px;
+	width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 0.8em;
+	margin-bottom: 40px;
+}
+
+#snakeBox {
+  position: relative;
+  width: 640px;
+  height: 400px;
+  border: 4px solid black;
+  background-color: #ebebeb;
+}
+
+#snakeBox .snakeInstructions {
+  display: none;
+  position: relative;
+  top: 123px;
+  left: 155px;
+  padding-top: 60px;
+  width: 320px;
+  height: 100px;
+  border: 4px solid black;
+  background-color: #ffffff;
+  text-align: center;
+  z-index: 1000;
+}
+
+#snakeBox .snakeInstructions span{
+  font-size: 0.8em;
+}
+
+#snakeBox .closeInstructions {
+  position:absolute;
+  cursor: pointer;
+  right: 6px;
+  top: 0;
+  font-size: 13px;
+}
+
+#snakeBox .food {
+  position: absolute;
+  /*border: 1px solid green;*/
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+#snakeBox .snakeBody {
+  position: absolute;
+  /*border: 1px solid brown;*/
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+#wechatQR {
+  position:fixed;
+  display: none;
+  width: 160px;
+  height: 160px;
+  z-index: 500;
+}
+
+@media (max-width:960px)  {
+  body {
+    font-size: 12pt;
+  }
+
+  .nav {
+    min-height: 0;
+    position: static;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .info {
+    display: none;
+  }
+
+  .order {
+    display: none;
+  }
+
+  .matrix {
+    width: 100%;
+  }
+
+  .mobile {
+    display: block;
+  }
+
+  .desktop {
+    display: none;
+  }
+
+  .projectinfo {
+    width: 100%;
+    text-align: center;
+  }
+
+  .projectinfo small {
+    display: block;
+    width: 100%;
+    text-align: justify;
+  }
+
+  .projecttitle {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .process {
+    width: 100%;
+  }
+
+  .slideshow {
+    margin-top: 90px;
+    width: 100%;
+    height: auto;
+  }
+
+  .slideshow .window {
+    width: 100%;
+    overflow-y: unset;
+    overflow-x: hidden;
+    height: auto;
+  }
+
+  .slideshow .window .slides {
+    width: 100% !important;
+    height: auto;
+  }
+
+  .slides img {
+    display: block;
+    width: 100%;
+    margin: 5px auto;
+  }
+
+  .slideshow .slide-buttons {
+    display:none;
+  }
+
+  .diagram1{
+    margin: 10px auto;
+  }
+
+  .diagram2{
+    margin: 10px auto;
+  }
+
+  .diagram1 img{
+    width: 99%;
+  }
+
+  .diagram2 img{
+    width: 99%;
+  }
+  .video iframe {
+    width: 100%;
+  }
+
+  .mobilelinks {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .mobilelinks span {
+    padding: 0 0.3em 0 0;
+    text-decoration: underline;
+  }
+
+  .mobilelinks span.displaying {
+    letter-spacing: -1px;
+    font-size: 0.9em;
+  }
+
+  footer {
+    width: 100%;
+    text-align:center;
+  }
+}
