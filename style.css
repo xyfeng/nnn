@@ -17,7 +17,7 @@ h2 {
   font-weight: normal;
 }
 
-.projectinfo{
+#projectinfo{
 	/* margin-left: auto; */
 	/* margin-right: auto; */
 	/* margin-top: 20px; */
@@ -28,12 +28,15 @@ h2 {
 	position: absolute;
 	font-size: 1em;
 	line-height: 140%;
-	/* border: 20px; */
-  border: 4px solid black;
+	border-width: 0;
+	border-color: black;
+	border-style: solid;
 	box-sizing: border-box;
+	/* border: 20px; */
+  /* border: 4px solid black; */
 }
 
-.projectinfo a {
+#projectinfo a {
   text-decoration:underline;
 }
 
@@ -41,7 +44,8 @@ h2 {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #ebebeb;
+  /* background-color: #ebebeb; */
+	background-color: #fff;
 }
 
 #snakeBox .snakeInstructions {
@@ -50,8 +54,8 @@ h2 {
 	top:calc(50% - 80px);
 	margin: auto;
   padding-top: 60px;
-  width: 320px;
-  height: 100px;
+  width: 312px;
+  height: 92px;
   border: 4px solid black;
   background-color: #ffffff;
   text-align: center;
