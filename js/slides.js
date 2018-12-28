@@ -297,6 +297,8 @@ $(function() {
     $(window).keydown(keydown);
     $(window).resize(resize);
     instructionClose.click(instructionsClosed);
+    initMobileControl();
+
     initSnake();
   }
 
@@ -348,6 +350,14 @@ $(function() {
       ex: (gridWidth() + boxWidth) / 2,
       ey: (gridHeight() + boxHeight) / 2
     }
+  }
+
+  function initMobileControl() {
+    var gn = new GyroNorm();
+    // gn.init().then(ongnReady);
+    // var ongnReady = function(){
+    //   console.log('enable mobile control');
+    // }
   }
 
   function initSnake() {
