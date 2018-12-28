@@ -23,12 +23,15 @@ var INSTRUCTION_PASS = ":)<br/>NOW DROP A HELLO.";
 // Snake game
 $(function() {
 
-  const BLOCK_SIZE = 20;
+  var BLOCK_WIDTH = 20;
+  var BLOCK_HEIGHT = 20;
+  var gridWidth, gridHeight;
+
   const START_SPEED = 6 / 1000; // 2.5 block per second
   var speed;
   var snakeBox = $('#snakeBox');
-  var borderHorizontal = 0;
-  var borderVertical = 0;
+  // var borderHorizontal = 0;
+  // var borderVertical = 0;
   var instructionBox;
 
   if (snakeBox.length == 0) {
@@ -202,12 +205,12 @@ $(function() {
         var hx = Math.ceil(head.px);
         var hy = Math.ceil(head.py);
 
-        if (head.px < 0 || hx >= gridWidth() || head.py < 0 || hy >= gridHeight()) {
+        if (head.px < 0 || hx >= gridWidth || head.py < 0 || hy >= gridHeight) {
           // Lost too;
           if (head.px < 0) head.px = 0;
           if (head.py < 0) head.py = 0;
-          if (hx > gridWidth()) head.px = gridWidth() - 1;
-          if (hy > gridHeight()) head.py = gridHeight() - 1;
+          if (hx > gridWidth) head.px = gridWidth - 1;
+          if (hy > gridHeight) head.py = gridHeight - 1;
           lost();
         }
 
@@ -229,8 +232,8 @@ $(function() {
     // Update body display
     for (var block of snake.body) {
       block.dom.css({
-        top: block.py * BLOCK_SIZE,
-        left: block.px * BLOCK_SIZE
+        top: block.py * BLOCK_HEIGHT,
+        left: block.px * BLOCK_WIDTH
       })
     }
 
@@ -289,7 +292,7 @@ $(function() {
   }
 
   function init() {
-    setCanvasBorder();
+    updateBlockSize();
     updateInstructionBox();
     setInstructions(INSTRUCTION_START);
     instructions.show();
@@ -301,52 +304,43 @@ $(function() {
   }
 
   function resize() {
-    setCanvasBorder();
+    updateBlockSize();
     updateInstructionBox();
   }
 
-  function setCanvasBorder() {
-    borderHorizontal = ((snakeBox.width() + borderHorizontal * 2) % BLOCK_SIZE) / 2;
-    borderVertical = ((snakeBox.height() + borderVertical * 2) % BLOCK_SIZE) / 2;
-    $('#projectinfo').css({
-      'border-top-width': borderVertical + 'px',
-      'border-bottom-width': borderVertical + 'px',
-      'border-left-width': borderHorizontal + 'px',
-      'border-right-width': borderHorizontal + 'px'
-    });
+  function updateBlockSize() {
+    gridWidth = Math.round(snakeBox.width()/BLOCK_WIDTH);
+    gridHeight = Math.round(snakeBox.height()/BLOCK_HEIGHT);
+    BLOCK_WIDTH = snakeBox.width()/gridWidth;
+    BLOCK_HEIGHT = snakeBox.height()/gridHeight;
+    // console.log(snakeBox.width(), gridWidth, BLOCK_WIDTH);
+    // console.log(snakeBox.height(), gridHeight, BLOCK_HEIGHT);
   }
 
   function updateInstructionBox() {
     var boxWidth, boxHeight;
-    if (gridWidth() % 2 === 0) {
-      instructions.css({
-        width: '312px'
-      });
+    if (gridWidth % 2 === 0) {
       boxWidth = 16;
     } else {
-      instructions.css({
-        width: '332px'
-      });
       boxWidth = 17;
     }
-    if (gridHeight() % 2 === 0) {
-      instructions.css({
-        height: '92px',
-        top: 'calc(50% - 80px)'
-      });
+    if (gridHeight % 2 === 0) {
       boxHeight = 8;
     } else {
-      instructions.css({
-        height: '112px',
-        top: 'calc(50% - 90px)'
-      });
       boxHeight = 9;
     }
+
+    instructions.css({
+      width: (boxWidth * BLOCK_WIDTH - 8) + 'px',
+      height: (boxHeight * BLOCK_HEIGHT - 68) + 'px',
+      top: 'calc(50% - ' + (boxHeight * BLOCK_HEIGHT)/2 + 'px)'
+    });
+
     instructionBox = {
-      sx: (gridWidth() - boxWidth) / 2,
-      sy: (gridHeight() - boxHeight) / 2,
-      ex: (gridWidth() + boxWidth) / 2,
-      ey: (gridHeight() + boxHeight) / 2
+      sx: (gridWidth - boxWidth) / 2 - 1,
+      sy: (gridHeight - boxHeight) / 2 - 1,
+      ex: (gridWidth + boxWidth) / 2 + 1,
+      ey: (gridHeight + boxHeight) / 2 + 1
     }
   }
 
@@ -368,8 +362,8 @@ $(function() {
     var newFood;
     while (true) {
       newFood = {
-        x: Math.floor(Math.random() * gridWidth()),
-        y: Math.floor(Math.random() * gridHeight())
+        x: Math.floor(Math.random() * gridWidth),
+        y: Math.floor(Math.random() * gridHeight)
       };
       var isOverlapping = false;
       for (var i = 0; i < snake.body.length; i++) {
@@ -394,8 +388,8 @@ $(function() {
     food = getRandomFood();
     food.c = c;
     foodBox.css({
-      top: food.y * BLOCK_SIZE,
-      left: food.x * BLOCK_SIZE,
+      top: food.y * BLOCK_HEIGHT,
+      left: food.x * BLOCK_WIDTH,
       display: 'block'
     });
     foodBox.text(c);
@@ -407,14 +401,6 @@ $(function() {
     instructions.hide();
     state = STATES.RUNNING;
     handler = window.requestAnimationFrame(update);
-  }
-
-  function gridWidth() {
-    return Math.floor(snakeBox.width() / BLOCK_SIZE);
-  }
-
-  function gridHeight() {
-    return Math.floor(snakeBox.height() / BLOCK_SIZE);
   }
 
   function pause() {
@@ -481,8 +467,8 @@ $(function() {
   }
 
   function snakeGrow(chunk) {
-    var x = Math.floor(gridWidth() * Math.random() * 0.6);
-    var y = Math.floor(gridHeight() * Math.random() * 0.3);
+    var x = Math.floor(gridWidth * Math.random() * 0.6);
+    var y = Math.floor(gridHeight * Math.random() * 0.3);
 
     if (snake.body.length > 0) {
       var lastBlock = snake.body[snake.body.length - 1];
@@ -501,8 +487,8 @@ $(function() {
         dom: dom
       }
       dom.css({
-        top: block.py * BLOCK_SIZE,
-        left: block.px * BLOCK_SIZE
+        top: block.py * BLOCK_HEIGHT,
+        left: block.px * BLOCK_WIDTH
       })
       snakeBox.append(dom);
       snake.body.push(block);
