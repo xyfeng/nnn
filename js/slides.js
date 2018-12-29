@@ -298,25 +298,40 @@ $(function() {
     instructions.show();
     state = STATES.LOADED;
     $(window).keydown(keydown);
-    $(window).resize(resize);
+    window.addEventListener("resize", resizeThrottler, false);
     instructionClose.click(instructionsClosed);
     initMobileControl();
 
     initSnake();
   }
 
-  function resize() {
+  var resizeTimeout;
+  function resizeThrottler() {
+    // ignore resize events as long as an actualResizeHandler execution is in the queue
+    if (!resizeTimeout) {
+      resizeTimeout = setTimeout(function() {
+        resizeTimeout = null;
+        actualResizeHandler();
+        // The actualResizeHandler will execute at a rate of 15fps
+      }, 66);
+    }
+  }
+
+  function actualResizeHandler() {
     updateBlockSize();
     updateInstructionBox();
   }
 
+
   function updateBlockSize() {
-    gridWidth = Math.round(snakeBox.width() / BLOCK_WIDTH);
-    gridHeight = Math.round(snakeBox.height() / BLOCK_HEIGHT);
-    BLOCK_WIDTH = snakeBox.width() / gridWidth;
-    BLOCK_HEIGHT = snakeBox.height() / gridHeight;
-    // console.log(snakeBox.width(), gridWidth, BLOCK_WIDTH);
-    // console.log(snakeBox.height(), gridHeight, BLOCK_HEIGHT);
+    var canvasWidth = snakeBox.width();
+    var canvasHeight = snakeBox.height();
+    gridWidth = Math.round(canvasWidth / BLOCK_WIDTH);
+    gridHeight = Math.round(canvasHeight / BLOCK_HEIGHT);
+    BLOCK_WIDTH = canvasWidth / gridWidth;
+    BLOCK_HEIGHT = canvasHeight / gridHeight;
+    // console.log(canvasWidth, gridWidth, BLOCK_WIDTH);
+    // console.log(canvasHeight, gridHeight, BLOCK_HEIGHT);
   }
 
   function updateInstructionBox() {
@@ -348,6 +363,7 @@ $(function() {
 
   var MOBILE_DIR = DIR.RIGHT;
   var ON_MOBILE = false;
+
   function initMobileControl() {
     var gn = new GyroNorm();
     gn.init().then(function() {
@@ -355,35 +371,31 @@ $(function() {
         console.log("Acceleration is available");
         ON_MOBILE = true;
         // direction triggering here
-        gn.start(function(data){
+        gn.start(function(data) {
           var newDir = MOBILE_DIR;
-          if(state == STATES.RUNNING) {
+          if (state == STATES.RUNNING) {
             // check horizontal
             var newHori = 0
-            if(data.dm.gx < -2) {
+            if (data.dm.gx < -2) {
               newHori = DIR.LEFT;
-            }
-            else if(data.dm.gx > 2) {
+            } else if (data.dm.gx > 2) {
               newHori = DIR.RIGHT;
             }
             var newVert = 0;
-            if(data.dm.gy > 2) {
+            if (data.dm.gy > 2) {
               newVert = DIR.UP;
-            }
-            else if(data.dm.gy < -2) {
+            } else if (data.dm.gy < -2) {
               newVert = DIR.DOWN;
             }
-            if(newHori !== 0 && newVert !== 0){
-               newDir = Math.abs(data.dm.gx) - Math.abs(data.dm.gy) ? newHori : newVert;
-            }
-            else if( newHori !== 0) {
+            if (newHori !== 0 && newVert !== 0) {
+              newDir = Math.abs(data.dm.gx) - Math.abs(data.dm.gy) ? newHori : newVert;
+            } else if (newHori !== 0) {
               newDir = newHori;
-            }
-            else if( newVert !== 0) {
+            } else if (newVert !== 0) {
               newDir = newVert;
             }
 
-            if(newDir !== MOBILE_DIR && newDir != snake.dir){
+            if (newDir !== MOBILE_DIR && newDir != snake.dir) {
               MOBILE_DIR = newDir;
               snake.cmd.push(MOBILE_DIR);
             }
@@ -478,8 +490,8 @@ $(function() {
       speed = START_SPEED * 3;
       scheduleAnimation(2000);
     } else {
-      // alter next food into :-)
-      foodBox.text(':-)');
+      // alter next food into :)
+      foodBox.text(':)');
       //save image
       html2canvas(document.body).then(function(canvas) {
         var a = document.createElement('a');
