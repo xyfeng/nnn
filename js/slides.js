@@ -135,7 +135,7 @@ $(function() {
       var head = snake.body[0];
       head.px += dx;
       head.py += dy;
-      if (Math.abs(head.px - head.x) > 1 || Math.abs(head.py - head.y) > 1) {
+      if (Math.abs(head.px - head.x) >= 1 || Math.abs(head.py - head.y) >= 1) {
         // Move the body blocks forward by one block
         var i = snake.body.length - 1;
         // AUTOPLAY
@@ -157,31 +157,33 @@ $(function() {
         dist = 0;
         if (head.px - head.x > 1) {
           head.x += 1;
-          dist = head.px - head.x - 1;
-          head.px = head.x;
+          // dist = head.px - head.x - 1;
         }
         if (head.py - head.y > 1) {
           head.y += 1;
-          dist = head.py - head.y - 1;
-          head.py = head.y;
+          // dist = head.py - head.y - 1;
         }
         if (head.px - head.x < -1) {
           head.x -= 1;
-          dist = head.x - head.px - 1;
-          head.px = head.x;
+          // dist = head.x - head.px - 1;
         }
         if (head.py - head.y < -1) {
           head.y -= 1;
-          dist = head.y - head.py - 1;
-          head.py = head.y;
+          // dist = head.y - head.py - 1;
         }
+        head.px = head.x;
+        head.py = head.y;
 
         if (AUTOPLAY) {
           var nextDir = getNextDir();
-          if (nextDir !== null && nextDir + snake.dir !== 0) {
-            snake.dir = nextDir;
-          } else {
-            console.log("suggested opposite direction");
+          if (nextDir !== null) {
+            if(nextDir + snake.dir !== 0){
+              snake.dir = nextDir;
+            }
+            else{
+              console.log("suggested opposite direction", nextDir, snake.dir, food);
+              // lost();
+            }
           }
         } else {
           // Update the snake direction
@@ -193,6 +195,12 @@ $(function() {
               break;
             }
           }
+        }
+
+        // Food check
+        if (head.x == food.x && head.y == food.y) {
+          snakeGrow(food.c);
+          addFood();
         }
       } else {
         // Move the body blocks by the same amount as the head did
@@ -227,12 +235,12 @@ $(function() {
         var hx = Math.ceil(head.px);
         var hy = Math.ceil(head.py);
 
-        if (head.px < 0 || hx >= gridWidth || head.py < 0 || hy >= gridHeight) {
+        if (head.px < 0 || head.px >= gridWidth || head.py < 0 || head.py >= gridHeight) {
           // Lost too;
           if (head.px < 0) head.px = 0;
           if (head.py < 0) head.py = 0;
-          if (hx > gridWidth) head.px = gridWidth - 1;
-          if (hy > gridHeight) head.py = gridHeight - 1;
+          if (head.px > gridWidth) head.px = gridWidth - 1;
+          if (head.px > gridHeight) head.py = gridHeight - 1;
           lost();
         }
 
@@ -241,12 +249,6 @@ $(function() {
           if (hx == block.x && hy == block.y) {
             lost();
           }
-        }
-
-        // Food check
-        if (hx == food.x && hy == food.y) {
-          snakeGrow(food.c);
-          addFood();
         }
       }
     }
@@ -408,6 +410,7 @@ $(function() {
 
   function getRandomFood() {
     var map = [];
+    // set grid to all 0
     for (var y = 0; y < gridHeight; y++) {
       for (var x = 0; x < gridWidth; x++) {
         map.push({
@@ -417,6 +420,7 @@ $(function() {
         });
       }
     }
+    // set snake body location to 1
     for (var i=0; i<snake.body.length; i++){
       var block = snake.body[i];
       map[block.y * gridWidth + block.x] = {
@@ -425,14 +429,33 @@ $(function() {
         d: 1
       };
     }
+    // set snaek heading block to 1
+    var nextBlock = {
+      x: snake.body[0].x + (snake.dir%2 == 0?snake.dir/2:0),
+      y: snake.body[0].y + (snake.dir%2 == 0?0:snake.dir)
+    }
+    map[nextBlock.y * gridWidth + nextBlock.x] = {
+      x: nextBlock.x,
+      y: nextBlock.y,
+      d: 1
+    };
+    // filter out located block
     var emptyMap = map.filter(function(element){
       return element.d === 0;
     });
+    // find random empty block
     var i = Math.floor(Math.random() * emptyMap.length);
     var newFood = {
       x: emptyMap[i].x,
       y: emptyMap[i].y
     };
+    // TODO: temporary fix opposite direction bug on start
+    if(snake.body.length == 1) {
+      if(newFood.x == 0) newFood.x = 1;
+      if(newFood.x == gridWidth-1) newFood.x = gridWidth-2;
+      if(newFood.y == 0) newFood.y = 1;
+      if(newFood.y == gridHeight-1) newFood.y = gridHeight-2;
+    }
     return newFood;
   }
 
@@ -467,6 +490,7 @@ $(function() {
   }
 
   function lost() {
+    console.log('lost');
     state = STATES.LOST;
     snake.cmd = []; // clear moving commands
     if (AUTOPLAY) {
@@ -495,8 +519,10 @@ $(function() {
 
   function won() {
     state = STATES.WON;
+    foodBox.text('');
 
     if (AUTOPLAY) {
+      console.log('won');
       return;
     }
     //save image
@@ -531,13 +557,13 @@ $(function() {
   }
 
   function snakeGrow(chunk) {
-    var x = Math.floor(gridWidth * Math.random() * 0.6);
-    var y = Math.floor(gridHeight * Math.random() * 0.3);
+    var x = Math.floor(gridWidth * (Math.random() * 0.6 + 0.2));
+    var y = Math.floor(gridHeight *(Math.random() * 0.6 + 0.2));
 
-    if (snake.body.length > 0) {
-      var lastBlock = snake.body[snake.body.length - 1];
-      x = lastBlock.x;
-      y = lastBlock.y;
+    if (preTail) {
+      // var lastBlock = snake.body[snake.body.length - 1];
+      x = preTail.x;
+      y = preTail.y;
     }
 
     for (var c of chunk) {
@@ -557,9 +583,8 @@ $(function() {
       snakeBox.append(dom);
       snake.body.push(block);
     }
-    if(speed < 0.025)
-      speed = speed + START_SPEED * 0.05;
-    console.log(speed);
+    speed = speed + START_SPEED * 0.05;
+    // console.log(speed);
   }
 
   function setInstructions(text) {
@@ -582,27 +607,28 @@ $(function() {
       return null;
     }
     var headBlock = snake.body[0];
+    var nextDir = null;
     if (headBlock.x === step[0]) {
-      if (headBlock.y < step[1]) return DIR.DOWN;
-      return DIR.UP;
+      nextDir = headBlock.y < step[1]? DIR.DOWN : DIR.UP;
     } else if (headBlock.y === step[1]) {
-      if (headBlock.x < step[0]) return DIR.RIGHT;
-      return DIR.LEFT;
+      nextDir = headBlock.x < step[0] ? DIR.RIGHT : DIR.LEFT;
+    } else {
+      console.log("WARNING", step, headBlock);
     }
-    console.log("ERROR", step, headBlock);
-    return null;
+    // console.log("get direction", nextDir, step, headBlock);
+    return nextDir;
   }
 
   function getPath() {
     var headToFoodPath = getAstarPath(snake.body[0], food);
     if (headToFoodPath.length <= 2) {
       FOLLOW_TAIL = true;
-      return getAstarPath(snake.body[0], preTail, true);
+      return getAstarPath(snake.body[0], preTail);
     }
     var headToTailPath = getHeadTailAstarPathAfter(headToFoodPath);
     if (headToTailPath.length <= 2) {
       FOLLOW_TAIL = true;
-      return getAstarPath(snake.body[0], preTail, true);
+      return getAstarPath(snake.body[0], preTail);
     } else {
       FOLLOW_TAIL = false;
       return headToFoodPath;
