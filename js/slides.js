@@ -30,8 +30,6 @@ $(function() {
   const START_SPEED = 6 / 1000; // 2.5 block per second
   var speed;
   var snakeBox = $('#snakeBox');
-  // var borderHorizontal = 0;
-  // var borderVertical = 0;
   var instructionBox;
 
   if (snakeBox.length == 0) {
@@ -68,6 +66,16 @@ $(function() {
   var food = {
     x: -1,
     y: -1
+  };
+
+  // Autoplay
+  var AUTOPLAY = false;
+  var nextPath = [];
+  var FOLLOW_TAIL = false;
+  var preTail = null;
+
+  function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
   };
 
   init();
@@ -130,6 +138,11 @@ $(function() {
       if (Math.abs(head.px - head.x) > 1 || Math.abs(head.py - head.y) > 1) {
         // Move the body blocks forward by one block
         var i = snake.body.length - 1;
+        // AUTOPLAY
+        preTail = {
+          x: snake.body[i].x,
+          y: snake.body[i].y
+        };
         while (i > 0) {
           var prevBlock = snake.body[i - 1];
           var currBlock = snake.body[i];
@@ -163,13 +176,20 @@ $(function() {
           head.py = head.y;
         }
 
-        // Update the snake direction
-        while (snake.cmd.length > 0) {
-          var cmd = snake.cmd.shift();
-          // Command and current direction is in opposite direction is ignored
-          if (cmd + snake.dir != 0) {
-            snake.dir = cmd;
-            break;
+        if (AUTOPLAY) {
+          var nextDir = getNextDir();
+          if (nextDir !== 0) {
+            snake.dir = nextDir;
+          }
+        } else {
+          // Update the snake direction
+          while (snake.cmd.length > 0) {
+            var cmd = snake.cmd.shift();
+            // Command and current direction is in opposite direction is ignored
+            if (cmd + snake.dir != 0) {
+              snake.dir = cmd;
+              break;
+            }
           }
         }
       } else {
@@ -292,20 +312,29 @@ $(function() {
   }
 
   function init() {
+    if (isMobileDevice()) {
+      AUTOPLAY = true;
+    }
+
     updateBlockSize();
     updateInstructionBox();
-    setInstructions(INSTRUCTION_START);
-    instructions.show();
-    state = STATES.LOADED;
-    $(window).keydown(keydown);
-    window.addEventListener("resize", resizeThrottler, false);
-    instructionClose.click(instructionsClosed);
-    initMobileControl();
 
-    initSnake();
+    if (AUTOPLAY) {
+      start();
+      snake.dir = getNextDir();
+    } else {
+      initSnake();
+      setInstructions(INSTRUCTION_START);
+      instructions.show();
+      state = STATES.LOADED;
+      $(window).keydown(keydown);
+      window.addEventListener("resize", resizeThrottler, false);
+      instructionClose.click(instructionsClosed);
+    }
   }
 
   var resizeTimeout;
+
   function resizeThrottler() {
     // ignore resize events as long as an actualResizeHandler execution is in the queue
     if (!resizeTimeout) {
@@ -359,59 +388,6 @@ $(function() {
       ex: (gridWidth + boxWidth) / 2 + 1,
       ey: (gridHeight + boxHeight) / 2 + 1
     }
-  }
-
-  var MOBILE_DIR = DIR.RIGHT;
-  var ON_MOBILE = false;
-
-  function initMobileControl() {
-    var gn = new GyroNorm();
-    gn.init().then(function() {
-      if (gn.isAvailable(GyroNorm.ACCELERATION_INCLUDING_GRAVITY)) {
-        console.log("Acceleration is available");
-        ON_MOBILE = true;
-        // direction triggering here
-        gn.start(function(data) {
-          var newDir = MOBILE_DIR;
-          if (state == STATES.RUNNING) {
-            // check horizontal
-            var newHori = 0
-            if (data.dm.gx < -2) {
-              newHori = DIR.LEFT;
-            } else if (data.dm.gx > 2) {
-              newHori = DIR.RIGHT;
-            }
-            var newVert = 0;
-            if (data.dm.gy > 2) {
-              newVert = DIR.UP;
-            } else if (data.dm.gy < -2) {
-              newVert = DIR.DOWN;
-            }
-            if (newHori !== 0 && newVert !== 0) {
-              newDir = Math.abs(data.dm.gx) - Math.abs(data.dm.gy) ? newHori : newVert;
-            } else if (newHori !== 0) {
-              newDir = newHori;
-            } else if (newVert !== 0) {
-              newDir = newVert;
-            }
-
-            if (newDir !== MOBILE_DIR && newDir != snake.dir) {
-              MOBILE_DIR = newDir;
-              snake.cmd.push(MOBILE_DIR);
-            }
-          }
-          // $('#dm_gx').val(data.dm.gx);
-          // $('#dm_gy').val(data.dm.gy);
-        });
-      } else {
-        console.log("Acceleration is not available");
-      }
-    }).catch(function(e) {
-      console.log("Device not supported.");
-      console.log(e);
-      $('#dm_gx').hide();
-      $('#dm_gy').hide();
-    })
   }
 
   function initSnake() {
@@ -482,6 +458,10 @@ $(function() {
   function lost() {
     state = STATES.LOST;
     snake.cmd = []; // clear moving commands
+    if (AUTOPLAY) {
+      return;
+    }
+
     // var instruction = ":)<br/>CLICK TO DOWNLOAD AND DROP A HELLO.";
     if (snake.body.length < EMAIL.length) {
       setInstructions(INSTRUCTION_FAIL);
@@ -505,6 +485,9 @@ $(function() {
   function won() {
     state = STATES.WON;
 
+    if (AUTOPLAY) {
+      return;
+    }
     //save image
     html2canvas(document.body).then(function(canvas) {
       var a = document.createElement('a');
@@ -568,6 +551,82 @@ $(function() {
 
   function setInstructions(text) {
     instructions.find('span').html(text);
+  }
+
+  // Autoplay
+  function getNextDir() {
+    if (nextPath.length === 0) {
+      nextPath = getPath();
+      nextPath.shift();
+    }
+    if (FOLLOW_TAIL) {
+      nextPath = getPath();
+      nextPath.shift();
+    }
+    var step = nextPath.shift();
+    if (!step) {
+      console.log("THE END");
+      return null;
+    }
+    var headBlock = snake.body[0];
+    if (headBlock.x === step[0]) {
+      if (headBlock.y < step[1]) return DIR.DOWN;
+      return DIR.UP;
+    } else if (headBlock.y === step[1]) {
+      if (headBlock.x < step[0]) return DIR.RIGHT;
+      return DIR.LEFT;
+    }
+    console.log("ERROR");
+    return null;
+  }
+
+  function getPath() {
+    var headToFoodPath = getAstarPath(snake.body[0], food);
+    if (headToFoodPath.length <= 2) {
+      FOLLOW_TAIL = true;
+      return getAstarPath(snake.body[0], preTail, true);
+    }
+    var headToTailPath = getHeadTailAstarPathAfter(headToFoodPath);
+    if (headToTailPath.length <= 2) {
+      FOLLOW_TAIL = true;
+      return getAstarPath(snake.body[0], preTail, true);
+    } else {
+      FOLLOW_TAIL = false;
+      return headToFoodPath;
+    }
+  }
+
+  function getAstarPath(start, end) {
+    var path = AStar(createGrid(snake.body), [start.x, start.y], [end.x, end.y], "Manhattan");
+    return path;
+  }
+
+  function getHeadTailAstarPathAfter(paths) {
+    // clone
+    var snakeClone = snake.body.concat([]);
+    for (var i = 1; i < paths.length; i++) {
+      snakeClone.unshift({
+        x: paths[i][0],
+        y: paths[i][1]
+      });
+    }
+    snakeClone = snakeClone.slice(0, snake.body.length + 2);
+    var end = snakeClone.pop();
+    return AStar(createGrid(snakeClone), [snakeClone[0].x, snakeClone[0].y], [end.x, end.y], "Manhattan");
+  }
+
+  function createGrid(array) {
+    var grid = []
+    for (var i = 0; i < gridHeight; i++) {
+      grid[i] = new Array(length);
+      for (var j = 0; j < gridWidth; j++) {
+        grid[i][j] = 0;
+      }
+    }
+    for (var i = 1; i < array.length; i++) {
+      grid[array[i].y][array[i].x] = 1;
+    }
+    return grid;
   }
 
 });
