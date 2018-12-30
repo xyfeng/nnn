@@ -178,8 +178,10 @@ $(function() {
 
         if (AUTOPLAY) {
           var nextDir = getNextDir();
-          if (nextDir !== 0) {
+          if (nextDir !== null && nextDir + snake.dir !== 0) {
             snake.dir = nextDir;
+          } else {
+            console.log("suggested opposite direction");
           }
         } else {
           // Update the snake direction
@@ -405,24 +407,32 @@ $(function() {
   }
 
   function getRandomFood() {
-    var newFood;
-    while (true) {
-      newFood = {
-        x: Math.floor(Math.random() * gridWidth),
-        y: Math.floor(Math.random() * gridHeight)
-      };
-      var isOverlapping = false;
-      for (var i = 0; i < snake.body.length; i++) {
-        var block = snake.body[i];
-        if (block.x === newFood.x && block.y === newFood.y) {
-          isOverlapping = true;
-          break;
-        }
-      }
-      if (!isOverlapping) {
-        break;
+    var map = [];
+    for (var y = 0; y < gridHeight; y++) {
+      for (var x = 0; x < gridWidth; x++) {
+        map.push({
+          x: x,
+          y: y,
+          d: 0
+        });
       }
     }
+    for (var i=0; i<snake.body.length; i++){
+      var block = snake.body[i];
+      map[block.y * gridWidth + block.x] = {
+        x: block.x,
+        y: block.y,
+        d: 1
+      };
+    }
+    var emptyMap = map.filter(function(element){
+      return element.d === 0;
+    });
+    var i = Math.floor(Math.random() * emptyMap.length);
+    var newFood = {
+      x: emptyMap[i].x,
+      y: emptyMap[i].y
+    };
     return newFood;
   }
 
@@ -430,6 +440,7 @@ $(function() {
     var c = nextChunk();
     if (c == '|') {
       won();
+      return;
     }
     food = getRandomFood();
     food.c = c;
@@ -546,7 +557,9 @@ $(function() {
       snakeBox.append(dom);
       snake.body.push(block);
     }
-    speed = speed + START_SPEED * 0.05;
+    if(speed < 0.025)
+      speed = speed + START_SPEED * 0.05;
+    console.log(speed);
   }
 
   function setInstructions(text) {
@@ -565,7 +578,7 @@ $(function() {
     }
     var step = nextPath.shift();
     if (!step) {
-      console.log("THE END");
+      console.log("NO STEP");
       return null;
     }
     var headBlock = snake.body[0];
@@ -576,7 +589,7 @@ $(function() {
       if (headBlock.x < step[0]) return DIR.RIGHT;
       return DIR.LEFT;
     }
-    console.log("ERROR");
+    console.log("ERROR", step, headBlock);
     return null;
   }
 
