@@ -269,7 +269,7 @@ $(function() {
 
   function nextChunk() {
     if (data.length < 1) {
-      data = (EMAIL + PHONE + MESSAGE).split('');
+      data = (EMAIL + PHONE + MESSAGE+BRAND).split('');
     }
     return data.shift();
   }
