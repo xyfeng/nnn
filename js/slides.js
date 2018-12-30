@@ -5,10 +5,11 @@ var phoneKey = "-nnnnorthy- ";
 var EMAIL = emailKey.split('').map(function(c, i) {
   return String.fromCharCode((emailKey.charCodeAt(i) ^ (emailSec.charCodeAt(i) - 32)))
 }).join('');
+var MESSAGE = "-an-email-is-more-like-a-letter-or-call-";
 var PHONE = phoneKey.split('').map(function(c, i) {
   return String.fromCharCode((phoneKey.charCodeAt(i) ^ (phoneSec.charCodeAt(i) - 32)))
 }).join('');
-var TAILS = "@nnnnorthy-@emergency.use.only-nervemilk.com-@typeself|";
+var BRAND = "-for-emergency-use-only™|";
 
 /* for test only */
 // var EMAIL = "n@g";
@@ -177,10 +178,9 @@ $(function() {
         if (AUTOPLAY) {
           var nextDir = getNextDir();
           if (nextDir !== null) {
-            if(nextDir + snake.dir !== 0){
+            if (nextDir + snake.dir !== 0) {
               snake.dir = nextDir;
-            }
-            else{
+            } else {
               console.log("suggested opposite direction", nextDir, snake.dir, food);
               // lost();
             }
@@ -269,7 +269,7 @@ $(function() {
 
   function nextChunk() {
     if (data.length < 1) {
-      data = (EMAIL + "-" + PHONE + "-" + TAILS).split('');
+      data = (EMAIL + PHONE + MESSAGE).split('');
     }
     return data.shift();
   }
@@ -298,10 +298,10 @@ $(function() {
       if (key == 'Escape' || key == 'U+001B' || key == 'p' || key == ' ' || key == 'U+0020' || key == 'U+0050') {
         pause();
       } else {
-        if (key.endsWith('Up')) snake.cmd.push(DIR.UP);
-        if (key.endsWith('Down')) snake.cmd.push(DIR.DOWN);
-        if (key.endsWith('Left')) snake.cmd.push(DIR.LEFT);
-        if (key.endsWith('Right')) snake.cmd.push(DIR.RIGHT);
+        if (key.endsWith('Up') && snake.dir !== DIR.UP) snake.cmd.push(DIR.UP);
+        if (key.endsWith('Down') && snake.dir !== DIR.DOWN) snake.cmd.push(DIR.DOWN);
+        if (key.endsWith('Left') && snake.dir !== DIR.LEFT) snake.cmd.push(DIR.LEFT);
+        if (key.endsWith('Right') && snake.dir !== DIR.RIGHT) snake.cmd.push(DIR.RIGHT);
       }
 
     } else if (state == STATES.PAUSED) {
@@ -326,6 +326,15 @@ $(function() {
     if (AUTOPLAY) {
       start();
       snake.dir = getNextDir();
+      // var NAME = "northychen";
+      // for (var i = 0; i < 10; i++) {
+      //   preTail = {
+      //     x: i + Math.floor(gridWidth / 2)-5,
+      //     y: Math.floor(gridHeight / 2)
+      //   }
+      //   snakeGrow(NAME[i]);
+      // }
+      // snake.dir = DIR.LEFT;
     } else {
       initSnake();
       setInstructions(INSTRUCTION_START);
@@ -421,7 +430,7 @@ $(function() {
       }
     }
     // set snake body location to 1
-    for (var i=0; i<snake.body.length; i++){
+    for (var i = 0; i < snake.body.length; i++) {
       var block = snake.body[i];
       map[block.y * gridWidth + block.x] = {
         x: block.x,
@@ -431,8 +440,8 @@ $(function() {
     }
     // set snaek heading block to 1
     var nextBlock = {
-      x: snake.body[0].x + (snake.dir%2 == 0?snake.dir/2:0),
-      y: snake.body[0].y + (snake.dir%2 == 0?0:snake.dir)
+      x: snake.body[0].x + (snake.dir % 2 == 0 ? snake.dir / 2 : 0),
+      y: snake.body[0].y + (snake.dir % 2 == 0 ? 0 : snake.dir)
     }
     map[nextBlock.y * gridWidth + nextBlock.x] = {
       x: nextBlock.x,
@@ -440,7 +449,7 @@ $(function() {
       d: 1
     };
     // filter out located block
-    var emptyMap = map.filter(function(element){
+    var emptyMap = map.filter(function(element) {
       return element.d === 0;
     });
     // find random empty block
@@ -450,11 +459,11 @@ $(function() {
       y: emptyMap[i].y
     };
     // TODO: temporary fix opposite direction bug on start
-    if(snake.body.length == 1) {
-      if(newFood.x == 0) newFood.x = 1;
-      if(newFood.x == gridWidth-1) newFood.x = gridWidth-2;
-      if(newFood.y == 0) newFood.y = 1;
-      if(newFood.y == gridHeight-1) newFood.y = gridHeight-2;
+    if (snake.body.length == 1) {
+      if (newFood.x == 0) newFood.x = 1;
+      if (newFood.x == gridWidth - 1) newFood.x = gridWidth - 2;
+      if (newFood.y == 0) newFood.y = 1;
+      if (newFood.y == gridHeight - 1) newFood.y = gridHeight - 2;
     }
     return newFood;
   }
@@ -558,7 +567,7 @@ $(function() {
 
   function snakeGrow(chunk) {
     var x = Math.floor(gridWidth * (Math.random() * 0.6 + 0.2));
-    var y = Math.floor(gridHeight *(Math.random() * 0.6 + 0.2));
+    var y = Math.floor(gridHeight * (Math.random() * 0.6 + 0.2));
 
     if (preTail) {
       // var lastBlock = snake.body[snake.body.length - 1];
@@ -609,7 +618,7 @@ $(function() {
     var headBlock = snake.body[0];
     var nextDir = null;
     if (headBlock.x === step[0]) {
-      nextDir = headBlock.y < step[1]? DIR.DOWN : DIR.UP;
+      nextDir = headBlock.y < step[1] ? DIR.DOWN : DIR.UP;
     } else if (headBlock.y === step[1]) {
       nextDir = headBlock.x < step[0] ? DIR.RIGHT : DIR.LEFT;
     } else {
