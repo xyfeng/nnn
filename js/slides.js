@@ -1,7 +1,7 @@
 var emailSec = "crr:'+7 <-H\"#o*#ccr`";
-var phoneSec = "&xzxzfml>4";
+var phoneSec = "<-xzxc{{kyl39";
 var emailKey = "-= northychen.com =-";
-var phoneKey = "-nnnnorthy- ";
+var phoneKey = "- nnnnnorthy -";
 var EMAIL = emailKey.split('').map(function(c, i) {
   return String.fromCharCode((emailKey.charCodeAt(i) ^ (emailSec.charCodeAt(i) - 32)))
 }).join('');
@@ -269,7 +269,8 @@ $(function() {
 
   function nextChunk() {
     if (data.length < 1) {
-      data = (EMAIL + PHONE + MESSAGE+BRAND).split('');
+      data = (EMAIL + '-' + PHONE + '|').split('');
+      // console.log(EMAIL + '-' + PHONE);
     }
     return data.shift();
   }
